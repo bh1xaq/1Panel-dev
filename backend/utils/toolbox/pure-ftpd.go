@@ -152,13 +152,16 @@ func (f *Ftp) SetPasswd(username, passwd string) error {
 	scanner := bufio.NewScanner(pwdFile)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.HasPrefix(line, username) {
-			userEntry := strings.Split(line, ":")
-			userEntry[1] = string(hashedPassword)
-			line = strings.Join(userEntry, ":")
-		}
 		if line == "" {
 			continue
+		}
+		userEntry := strings.Split(line, ":")
+		if len(userEntry) < 2 {
+			continue
+		}
+		if userEntry[0] == username {
+			userEntry[1] = string(hashedPassword)
+			line = strings.Join(userEntry, ":")
 		}
 		entrys = append(entrys, line)
 	}
